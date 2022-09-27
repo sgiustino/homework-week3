@@ -8,9 +8,9 @@ Sophia Giustino
 Answer the following questions with dplyr code in RMarkdown. Post the
 answer into your github as a “nice readme” as explained in class.
 
-#### How many flights have a missing dep\_time? What other variables are missing? What might these rows represent?
+#### How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
 
-*How many flights have a missing dep\_time?*
+*How many flights have a missing dep_time?*
 
 ``` r
 flights$dep_time %>% is.na() %>% sum()
@@ -18,7 +18,7 @@ flights$dep_time %>% is.na() %>% sum()
 
     ## [1] 8255
 
-8255 flights have a missing dep\_time.
+8255 flights have a missing dep_time.
 
 *What other variables are missing?*
 
@@ -40,13 +40,13 @@ flights %>% filter(is.na(dep_time)) %>% head()
     ## #   hour <dbl>, minute <dbl>, time_hour <dttm>
 
 ``` r
-names(which(colSums(is.na(flights))>8000))
+names(which(colSums(is.na(flights))>=8255))
 ```
 
     ## [1] "dep_time"  "dep_delay" "arr_time"  "arr_delay" "air_time"
 
-The other missing variables are dep\_delay, arr\_time, arr\_delay, and
-air\_time.
+The other missing variables are dep_delay, arr_time, arr_delay, and
+air_time.
 
 *What might these rows represent?*
 
@@ -54,7 +54,7 @@ These rows might represent cancelled flights because they have scheduled
 times but they never depart or arrive or have a calculated air time, so
 it is possible the flights did not actually occur.
 
-#### Currently dep\_time and sched\_dep\_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+#### Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
 
 ``` r
 hr_con <- function(x){(x %/% 100) * 60}
@@ -79,23 +79,26 @@ flights %>% head()
     ## #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
     ## #   hour <dbl>, minute <dbl>, time_hour <dttm>
 
-#### Look at the number of canceled flights per day. Is there a pattern? Is the proportion of canceled flights related to the average delay? Use multiple dyplr operations, all on one line, concluding with ggplot(aes(x= ,y=)) + geom\_point()
+#### Look at the number of canceled flights per day. Is there a pattern? Is the proportion of canceled flights related to the average delay? Use multiple dyplr operations, all on one line, concluding with ggplot(aes(x= ,y=)) + geom_point()
 
 ``` r
 flights %>% 
   mutate(cancel = is.na(dep_time)) %>% 
-  group_by(day) %>% 
-  summarise(daily_canc = sum(cancel), avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
-  ggplot(aes(x= daily_canc, y = avg_delay)) +
-  xlab("Number of Canceled Flights Per Day") +
-  ylab("Average Delay") +
-  ggtitle("Number of Canceled Flights Per Day vs. Average Flight Delay Time") +
+  group_by(month, day) %>% 
+  summarise(num_flights = n(), prop_canc = sum(cancel)/num_flights, avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ggplot(aes(x= avg_delay, y = prop_canc)) +
+  ylab("Number of Canceled Flights Per Day") +
+  xlab("Average Delay") +
+  ggtitle("Proportion of Canceled Flights Per Day vs. Average Flight Delay Time") +
   geom_point() 
 ```
+
+    ## `summarise()` has grouped output by 'month'. You can override using the
+    ## `.groups` argument.
 
 ![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 There is a pattern in the number of canceled flights per day. The
 proportion of canceled flights is related to the average delay. As we
-can see in the plot, the more canceled flights there are in the day, the
-longer the average delay time tends to be.
+can see in the plot, the longer the daily average delay time is, the
+higher the proportion of canceled flights there are in the day.
