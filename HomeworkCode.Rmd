@@ -1,0 +1,69 @@
+---
+title: "Homework Week 3"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(nycflights13)
+library(ggplot2)
+
+```
+
+## Homework Week 3
+
+Answer the following questions with dplyr code in RMarkdown. Post the answer into your github as a “nice readme” as explained in class.
+
+#### How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+
+*How many flights have a missing dep_time?*
+
+```{r}
+flights$dep_time %>% is.na() %>% sum()
+```
+8255 flights have a missing dep_time.
+
+*What other variables are missing?*
+
+```{r}
+flights %>% filter(is.na(dep_time)) %>% head()
+names(which(colSums(is.na(flights))>8000))
+```
+
+The other missing variables are dep_delay, arr_time, arr_delay, and air_time.
+
+*What might these rows represent?*
+
+These rows might represent cancelled flights because they have scheduled times but they never depart or arrive or have a calculated air time, so it is possible the flights did not actually occur. 
+
+#### Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+
+```{r}
+hr_con <- function(x){(x %/% 100) * 60}
+
+
+flights = flights %>% 
+  mutate(dep_time = hr_con(dep_time) + (dep_time %% 100), 
+         sched_dep_time = hr_con(sched_dep_time) + (sched_dep_time %% 100)) 
+flights %>% head()
+```
+
+#### Look at the number of canceled flights per day. Is there a pattern? Is the proportion of canceled flights related to the average delay? Use multiple dyplr operations, all on one line, concluding with ggplot(aes(x= ,y=)) + geom_point()
+
+
+```{r}
+flights %>% 
+  mutate(cancel = is.na(dep_time)) %>% 
+  group_by(day) %>% 
+  summarise(daily_canc = sum(cancel), avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  ggplot(aes(x= daily_canc, y = avg_delay)) +
+  xlab("Number of Canceled Flights Per Day") +
+  ylab("Average Delay") +
+  ggtitle("Number of Canceled Flights Per Day vs. Average Flight Delay Time") +
+  geom_point() 
+```
+
+There is a pattern in the number of canceled flights per day. The proportion of canceled flights is related to the average delay. As we can see in the plot, the more canceled flights there are in the day, the longer the average delay time tends to be. 
+
