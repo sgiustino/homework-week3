@@ -1,5 +1,5 @@
 ---
-title: "Homework0927"
+title: "First Homework for Stat 433 Fall 2022"
 author: "Sophia Giustino"
 date: "9/20/2022"
 output: github_document

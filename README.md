@@ -1,4 +1,4 @@
-Homework0927
+First Homework for Stat 433 Fall 2022
 ================
 Sophia Giustino
 9/20/2022
