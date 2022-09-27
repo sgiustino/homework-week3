@@ -8,7 +8,7 @@ Sophia Giustino
 Answer the following questions with dplyr code in RMarkdown. Post the
 answer into your github as a “nice readme” as explained in class.
 
-#### How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+#### \#1 How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
 
 *How many flights have a missing dep_time?*
 
@@ -54,7 +54,7 @@ These rows might represent cancelled flights because they have scheduled
 times but they never depart or arrive or have a calculated air time, so
 it is possible the flights did not actually occur.
 
-#### Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+#### \#2 Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
 
 ``` r
 hr_con <- function(x){(x %/% 100) * 60}
@@ -79,7 +79,7 @@ flights %>% head()
     ## #   tailnum <chr>, origin <chr>, dest <chr>, air_time <dbl>, distance <dbl>,
     ## #   hour <dbl>, minute <dbl>, time_hour <dttm>
 
-#### Look at the number of canceled flights per day. Is there a pattern? Is the proportion of canceled flights related to the average delay? Use multiple dyplr operations, all on one line, concluding with ggplot(aes(x= ,y=)) + geom_point()
+#### \#3 Look at the number of canceled flights per day. Is there a pattern? Is the proportion of canceled flights related to the average delay? Use multiple dyplr operations, all on one line, concluding with ggplot(aes(x= ,y=)) + geom_point()
 
 ``` r
 flights %>% 
